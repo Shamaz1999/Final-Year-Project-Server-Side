@@ -1,6 +1,11 @@
 var express = require('express');
 var server=express();
 var bodyParser = require("body-parser");
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var session = require('express-session')
+
+// Database Connection and Models
 require('./mongoDB/mongoconnection')
 var User = require("./mongoDB/user-model");
 var Contact = require("./mongoDB/contact-modal")
@@ -50,7 +55,9 @@ server.post('/postad',(req,res)=>{
 
 })
 
-server.post('/login',(req,res)=>{
+
+
+server.post('/login', (req,res)=>{
     var email = req.body.email;
     var password = req.body.password;
 
@@ -64,21 +71,10 @@ server.post('/login',(req,res)=>{
 
 })
 
-// server.post('/allads',(req,res)=>{
-
-//     Post.find({},(err,ads)=>{
-//         res.send(ads.reduce((adsMap, item)=>{
-//             adsMap[item.id] = item
-//             return adsMap;
-//         }, {} ))
-//     })
-// })
 
 server.post('/allads',(req,res)=>{
 
-    // Post.find({}).then((ads)=>{
-    //     res.send(ads)
-    // })
+   
     Post.find({},(err,data)=>{
         if (err)
         console.log(err)
@@ -88,6 +84,20 @@ server.post('/allads',(req,res)=>{
     })
 })
 
+server.post('/currentad',(req,res)=>{
+    id = req.body.id
+    console.log(req.body.id)
+    
+    Post.findById(id,(err,data)=>{
+        if (err){
+            console.log(err)
+            res.send(err)
+        }
+        else
+            res.send(data)
+
+    })
+})
 
 
 server.listen(8000, () => console.log("server is running at port 8000"))
