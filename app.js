@@ -15,15 +15,15 @@ var Post = require('./mongoDB/post-ad-model')
 server.use(bodyParser.urlencoded({ extended: true }))
 server.use(bodyParser.json())
 
-server.post('/signup', (req , res)=>{
-    res.send(req.body);
-    console.log(req.body)
-    
+server.post('/signup', (req , res)=>{ 
+
     var user = new User(req.body)
     user.save((err,data)=>{
         if (err)
         console.log(err)
         else
+        console.log(data)
+        res.send(data)
         console.log("Data inserted : User Added")
     })
 })
@@ -83,6 +83,49 @@ server.post('/allads',(req,res)=>{
 
     })
 })
+
+
+server.post('/userads',(req,res)=>{
+// console.log(req.body._id)
+   
+    Post.find({sellerId:req.body._id},(err,data)=>{
+        if (err)
+        console.log(err)
+        else
+        console.log(data)
+        res.send(data)
+
+    })
+})
+
+
+server.post('/updateinfo',(req,res)=>{
+    var id = req.body.id;
+   
+    User.findByIdAndUpdate(id,{
+        $set:{name:req.body.name,password:req.body.password,phone:req.body.phone,about:req.body.about}},{new:true},(err,data)=>{
+        if (err)
+        console.log(err)
+        else
+        res.send(data)
+
+    })
+})
+
+server.post('/deleteuser',(req,res)=>{
+    var id = req.body.id;
+   
+    User.findByIdAndUpdate(id,{
+        $set:{name:req.body.name,password:req.body.password,phone:req.body.phone,about:req.body.about}},{new:true},(err,data)=>{
+        if (err)
+        console.log(err)
+        else
+        res.send(data)
+
+    })
+})
+
+
 
 server.post('/currentad',(req,res)=>{
     id = req.body.id
