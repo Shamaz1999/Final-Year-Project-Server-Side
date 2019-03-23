@@ -12,6 +12,8 @@ var Contact = require("./mongoDB/contact-modal")
 var Post = require('./mongoDB/post-ad-model')
 
 
+server.use(express.static('./build'))
+
 server.use(bodyParser.urlencoded({ extended: true }))
 server.use(bodyParser.json())
 
@@ -98,6 +100,63 @@ server.post('/userads',(req,res)=>{
     })
 })
 
+server.post('/categoryads',(req,res)=>{
+
+   console.log(req.body)
+   
+    Post.find({category:req.body.category},(err,data)=>{
+        if (err)
+        console.log(err)
+        else
+        console.log(data)
+        res.send(data)
+
+    })
+})
+
+server.post('/countryads',(req,res)=>{
+
+   console.log(req.body)
+   
+    Post.find({sellerCountry:req.body.country},(err,data)=>{
+        if (err)
+        console.log(err)
+        else
+        console.log(data)
+        res.send(data)
+
+    })
+})
+
+
+server.post('/searchads',(req,res)=>{
+
+   console.log(req.body)
+   
+    Post.find({adTitle:new RegExp(req.body.search, 'i')},(err,data)=>{
+        if (err)
+        console.log(err)
+        else
+        console.log(data)
+        res.send(data)
+
+    })
+})
+
+
+
+server.post('/sellerprofile',(req,res)=>{
+console.log(req.body)
+   
+    User.findById(req.body.sellerid,(err,data)=>{
+        if (err)
+        console.log(err)
+        else
+        console.log(data)
+        res.send(data)
+
+    })
+})
 
 server.post('/updateinfo',(req,res)=>{
     var id = req.body.id;
@@ -115,11 +174,11 @@ server.post('/updateinfo',(req,res)=>{
 server.post('/deleteuser',(req,res)=>{
     var id = req.body.id;
    
-    User.findByIdAndUpdate(id,{
-        $set:{name:req.body.name,password:req.body.password,phone:req.body.phone,about:req.body.about}},{new:true},(err,data)=>{
+    User.findByIdAndRemove(id,(err,data)=>{
         if (err)
         console.log(err)
         else
+        console.log('User Delted')
         res.send(data)
 
     })
@@ -129,7 +188,6 @@ server.post('/deleteuser',(req,res)=>{
 
 server.post('/currentad',(req,res)=>{
     id = req.body.id
-    console.log(req.body.id)
     
     Post.findById(id,(err,data)=>{
         if (err){
@@ -142,5 +200,5 @@ server.post('/currentad',(req,res)=>{
     })
 })
 
-
-server.listen(8000, () => console.log("server is running at port 8000"))
+const PORT = process.env.PORT || 8000
+server.listen(PORT, () => console.log(`server is running at port ${PORT}`))
