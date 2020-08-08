@@ -147,8 +147,10 @@ server.post('/searchads',(req,res)=>{
 
 server.post('/sellerprofile',(req,res)=>{
 console.log(req.body)
-   
-    User.findById(req.body.sellerid,(err,data)=>{
+console.log("This is seller profile request")
+
+
+    User.findById(req.body.sellerId,(err,data)=>{
         if (err)
         console.log(err)
         else
@@ -187,6 +189,9 @@ server.post('/deleteuser',(req,res)=>{
 
 
 server.post('/currentad',(req,res)=>{
+    console.log(req.body)
+    console.log("This is current add req")
+
     id = req.body.id
     
     Post.findById(id,(err,data)=>{
@@ -196,9 +201,9 @@ server.post('/currentad',(req,res)=>{
         }
         else
             res.send(data)
-
+            console.log(data)
     })
 })
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 8000
 server.listen(PORT, () => console.log(`server is running at port ${PORT}`))
