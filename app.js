@@ -76,7 +76,6 @@ server.post('/login', (req,res)=>{
 
 server.post('/allads',(req,res)=>{
 
-   
     Post.find({},(err,data)=>{
         if (err)
         console.log(err)
