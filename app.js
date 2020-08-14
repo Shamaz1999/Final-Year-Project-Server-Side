@@ -58,11 +58,10 @@ server.post('/postad',(req,res)=>{
 })
 
 
-
 server.post('/login', (req,res)=>{
     var email = req.body.email;
     var password = req.body.password;
-
+    
     User.findOne({email:email,password:password},(err,data)=>{
         if(err)
         console.log(err)
@@ -70,18 +69,18 @@ server.post('/login', (req,res)=>{
         console.log(data)
         res.send(data)
     })
-
+    
 })
 
 
 server.post('/allads',(req,res)=>{
-
+    
     Post.find({},(err,data)=>{
         if (err)
         console.log(err)
         else
         res.send(data)
-
+        
     })
 })
 
@@ -89,7 +88,7 @@ server.post('/allads',(req,res)=>{
 server.post('/userads',(req,res)=>{
 // console.log(req.body._id)
    
-    Post.find({sellerId:req.body._id},(err,data)=>{
+Post.find({sellerId:req.body._id},(err,data)=>{
         if (err)
         console.log(err)
         else
@@ -100,39 +99,56 @@ server.post('/userads',(req,res)=>{
 })
 
 server.post('/categoryads',(req,res)=>{
-
-   console.log(req.body)
-   
+    
+    console.log(req.body)
+    
     Post.find({category:req.body.category},(err,data)=>{
         if (err)
         console.log(err)
         else
         console.log(data)
         res.send(data)
-
+        
     })
 })
 
 server.post('/countryads',(req,res)=>{
-
-   console.log(req.body)
-   
+    
+    console.log(req.body)
+    
     Post.find({sellerCountry:req.body.country},(err,data)=>{
         if (err)
         console.log(err)
         else
         console.log(data)
         res.send(data)
-
+        
     })
 })
 
 
 server.post('/searchads',(req,res)=>{
-
-   console.log(req.body)
-   
+    
+    console.log(req.body)
+    
     Post.find({adTitle:new RegExp(req.body.search, 'i')},(err,data)=>{
+        if (err)
+        console.log(err)
+        else
+        console.log(data)
+        res.send(data)
+        
+    })
+})
+
+
+
+server.post('/updateuser',(req,res)=>{
+    console.log(req.body)
+
+console.log("This is update user request")
+
+    User.findById(req.body.user._id,(err,data)=>{
         if (err)
         console.log(err)
         else
@@ -142,10 +158,8 @@ server.post('/searchads',(req,res)=>{
     })
 })
 
-
-
 server.post('/sellerprofile',(req,res)=>{
-console.log(req.body)
+    console.log(req.body)
 console.log("This is seller profile request")
 
 
@@ -161,16 +175,60 @@ console.log("This is seller profile request")
 
 server.post('/updateinfo',(req,res)=>{
     var id = req.body.id;
-   
+    
     User.findByIdAndUpdate(id,{
         $set:{name:req.body.name,password:req.body.password,phone:req.body.phone,about:req.body.about}},{new:true},(err,data)=>{
-        if (err)
-        console.log(err)
-        else
-        res.send(data)
-
+            if (err)
+            console.log(err)
+            else
+            res.send(data)
+            
+        })
     })
-})
+    //Add Favorite Ads Route
+    server.post('/markfavorite',(req,res)=>{
+        // res.send(req.body);
+        console.log("This is favorite req ");
+        var id = req.body.user._id
+        User.findByIdAndUpdate(id,{$addToSet: {favorites: {favid: req.body.id}}},{new:true},(err,data)=>{
+            if(err)
+            console.log('This is error' +err)
+            else
+            console.log('This is the data '+data)
+            res.send(data)
+        })
+    
+        // var post = new Post(req.body)
+        // post.save((err,data)=>{
+        //     if(err)
+        //     console.log(err)
+        //     else
+        //     console.log('Data inserted : Ad Post data saved')
+        // })
+    
+    })
+    //Remove Favorite Ads Route
+    server.post('/removefavorite',(req,res)=>{
+        // res.send(req.body);
+        console.log("This is remove favorite req ");
+        var id = req.body.user._id
+        User.findByIdAndUpdate(id,{$pull: {favorites: {favid: req.body.id}}},(err,data)=>{
+            if(err)
+            console.log('This is error' + err)
+            else
+            console.log('This is the data '+ data)
+            res.send(data)
+        })
+    
+        // var post = new Post(req.body)
+        // post.save((err,data)=>{
+        //     if(err)
+        //     console.log(err)
+        //     else
+        //     console.log('Data inserted : Ad Post data saved')
+        // })
+    
+    })
 
 server.post('/deleteuser',(req,res)=>{
     var id = req.body.id;
