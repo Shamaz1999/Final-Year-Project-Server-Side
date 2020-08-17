@@ -213,36 +213,46 @@ server.post('/updateinfo',(req,res)=>{
 
 
     //Add Favorite Ads Route
-    server.post('/markfavorite',(req,res)=>{
+    server.post('/markfavorite',async (req,res)=>{
         
         console.log("This is favorite req ");
         var id = req.body.user._id
-        User.findByIdAndUpdate(id,{$addToSet: {favorites: {favid: req.body.id}}},{new:true},(err,data)=>{
-            if(err)
-            console.log('This is error' +err)
-            else
-            console.log('This is the data '+data)
-            res.send(data)
-        })
-    
+        try {
+            const user = await User.findOne({_id:id});
+            if(user){
+                console.log('user found')
+                user.favorites.push(req.body.id);
+                user.markModified('favorites');
+                await user.save();
+                res.send(user);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        
     })
 
 
 
     //Remove Favorite Ads Route
-    server.post('/removefavorite',(req,res)=>{
+    server.post('/removefavorite',async (req,res)=>{
 
         console.log("This is remove favorite req ");
         var id = req.body.user._id
-        User.findByIdAndUpdate(id,{$pull: {favorites: {favid: req.body.id}}},(err,data)=>{
-            if(err)
-            console.log('This is error' + err)
-            else
-            console.log('This is the data '+ data)
-            res.send(data)
-        })
-           
-    
+
+        try {
+            const user = await User.findOne({_id:id});
+            if(user){
+                console.log('user found')
+                user.favorites.pull(req.body.id);
+                user.markModified('favorites');
+                await user.save();
+                res.send(user);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        
     })
 
 server.post('/deleteuser',(req,res)=>{
