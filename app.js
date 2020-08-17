@@ -98,6 +98,30 @@ Post.find({sellerId:req.body._id},(err,data)=>{
     })
 })
 
+// Favorite ads
+server.post('/favoriteads',(req,res)=>{
+    console.log("This is favorite ads req")
+    console.log(req.body)
+    // var arr = req.body;
+    // console.log(arr[0].favid);
+    // var dataArr = [];
+    // for(var i = 0; i < arr.length; i++){
+    //     console.log('inside loop')
+      Post.find({_id: {$in:req.body}},(err,data)=>{
+        //   console.log('inside data finder')
+        if (err)
+          console.log(err)
+        else{
+          console.log(data);
+        //   dataArr.push(data)
+          res.send(data)
+        }
+      })
+    // }
+    // console.log('this is data array')
+    // console.log(dataArr)
+})
+
 server.post('/categoryads',(req,res)=>{
     
     console.log(req.body)
@@ -144,9 +168,9 @@ server.post('/searchads',(req,res)=>{
 
 
 server.post('/updateuser',(req,res)=>{
-    console.log(req.body)
-
-console.log("This is update user request")
+    
+    // console.log("This is update user request")
+    // console.log(req.body)   
 
     User.findById(req.body.user._id,(err,data)=>{
         if (err)
@@ -185,9 +209,12 @@ server.post('/updateinfo',(req,res)=>{
             
         })
     })
+
+
+
     //Add Favorite Ads Route
     server.post('/markfavorite',(req,res)=>{
-        // res.send(req.body);
+        
         console.log("This is favorite req ");
         var id = req.body.user._id
         User.findByIdAndUpdate(id,{$addToSet: {favorites: {favid: req.body.id}}},{new:true},(err,data)=>{
@@ -198,18 +225,13 @@ server.post('/updateinfo',(req,res)=>{
             res.send(data)
         })
     
-        // var post = new Post(req.body)
-        // post.save((err,data)=>{
-        //     if(err)
-        //     console.log(err)
-        //     else
-        //     console.log('Data inserted : Ad Post data saved')
-        // })
-    
     })
+
+
+
     //Remove Favorite Ads Route
     server.post('/removefavorite',(req,res)=>{
-        // res.send(req.body);
+
         console.log("This is remove favorite req ");
         var id = req.body.user._id
         User.findByIdAndUpdate(id,{$pull: {favorites: {favid: req.body.id}}},(err,data)=>{
@@ -219,14 +241,7 @@ server.post('/updateinfo',(req,res)=>{
             console.log('This is the data '+ data)
             res.send(data)
         })
-    
-        // var post = new Post(req.body)
-        // post.save((err,data)=>{
-        //     if(err)
-        //     console.log(err)
-        //     else
-        //     console.log('Data inserted : Ad Post data saved')
-        // })
+           
     
     })
 
