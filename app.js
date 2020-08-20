@@ -1,8 +1,8 @@
 var express = require('express');
 var server=express();
 var bodyParser = require("body-parser");
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+// var passport = require('passport');
+// var LocalStrategy = require('passport-local').Strategy;
 var session = require('express-session')
 
 // Database Connection and Models
