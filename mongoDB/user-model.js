@@ -5,11 +5,16 @@ const userSchema = {
     url1: String,
     about: String,
     password: String,
+    phone: String,
+    gender: String,
+    DOB: String,
+    country: String,
+    address: String,
+    date: String,
     favorites: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Ad Post"
-    }],
-    phone: String, gender: String, DOB: String, country: String, address: String, date: String
+    }]
 }
 const Users = mongoose.model('User', userSchema);
 module.exports = Users

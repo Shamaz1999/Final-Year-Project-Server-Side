@@ -102,24 +102,16 @@ Post.find({sellerId:req.body._id},(err,data)=>{
 server.post('/favoriteads',(req,res)=>{
     console.log("This is favorite ads req")
     console.log(req.body)
-    // var arr = req.body;
-    // console.log(arr[0].favid);
-    // var dataArr = [];
-    // for(var i = 0; i < arr.length; i++){
-    //     console.log('inside loop')
+  
       Post.find({_id: {$in:req.body}},(err,data)=>{
-        //   console.log('inside data finder')
         if (err)
           console.log(err)
         else{
           console.log(data);
-        //   dataArr.push(data)
           res.send(data)
         }
       })
-    // }
-    // console.log('this is data array')
-    // console.log(dataArr)
+    
 })
 
 server.post('/categoryads',(req,res)=>{
@@ -166,11 +158,8 @@ server.post('/searchads',(req,res)=>{
 })
 
 
-
+    //Update User Route
 server.post('/updateuser',(req,res)=>{
-    
-    // console.log("This is update user request")
-    // console.log(req.body)   
 
     User.findById(req.body.user._id,(err,data)=>{
         if (err)
@@ -181,6 +170,10 @@ server.post('/updateuser',(req,res)=>{
 
     })
 })
+
+
+
+
 
 server.post('/sellerprofile',(req,res)=>{
     console.log(req.body)
@@ -197,11 +190,17 @@ console.log("This is seller profile request")
     })
 })
 
+
+//  Update User info route
 server.post('/updateinfo',(req,res)=>{
     var id = req.body.id;
     
     User.findByIdAndUpdate(id,{
-        $set:{name:req.body.name,password:req.body.password,phone:req.body.phone,about:req.body.about}},{new:true},(err,data)=>{
+        $set:{name:req.body.name,
+            password:req.body.password,
+            phone:req.body.phone,
+            about:req.body.about
+        }},{new:true},(err,data)=>{
             if (err)
             console.log(err)
             else
@@ -210,6 +209,38 @@ server.post('/updateinfo',(req,res)=>{
         })
     })
 
+//Update Ad route
+server.post('/editad',(req,res)=>{
+    
+    console.log("This is update ad request");
+    console.log(req.body);
+    Post.findByIdAndUpdate(req.body.id,
+        {$set:{
+            sellerCountry:req.body.sellerCountry, 
+            adTitle: req.body.adTitle, 
+            brand: req.body.brand, 
+            category:req.body.category, 
+            condition: req.body.condition, 
+            price: req.body.price, 
+            location: req.body.location, 
+            description: req.body.description, 
+            sellerId: req.body.sellerId, 
+            sellerImg: req.body.sellerImg, 
+            sellerName: req.body.sellerName, 
+            phone: req.body.phone, 
+            date: req.body.date, 
+            url1: req.body.url1, 
+            url2: req.body.url2, 
+            url3: req.body.url3, 
+            url4: req.body.url4 
+        }},(err,data)=>{
+        if(err)
+        console.log(err)
+        else
+        console.log(data)
+        res.send(data);
+    })
+})
 
 
     //Add Favorite Ads Route
@@ -243,7 +274,6 @@ server.post('/updateinfo',(req,res)=>{
         try {
             const user = await User.findOne({_id:id});
             if(user){
-                console.log('user found')
                 user.favorites.pull(req.body.id);
                 user.markModified('favorites');
                 await user.save();
@@ -254,6 +284,9 @@ server.post('/updateinfo',(req,res)=>{
         }
         
     })
+
+
+    // Delete User Route
 
 server.post('/deleteuser',(req,res)=>{
     var id = req.body.id;
@@ -268,6 +301,20 @@ server.post('/deleteuser',(req,res)=>{
     })
 })
 
+//Delete Ad Route
+server.post('/deletead',(req,res)=>{    
+    console.log("this is delete ad request")
+    // console.log(req.body.adToDelete)
+    var id = req.body.adToDelete
+    console.log(id)
+    Post.findByIdAndDelete(id,(err,data)=>{
+        if(err)
+        console.log(err)
+        else
+        console.log('Add deleted')
+        res.send(data)
+    })
+})
 
 
 server.post('/currentad',(req,res)=>{
