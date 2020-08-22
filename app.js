@@ -129,7 +129,7 @@ server.post('/categoryads',(req,res)=>{
 })
 
 server.post('/countryads',(req,res)=>{
-    
+    console.log('this is country ads request')
     console.log(req.body)
     
     Post.find({sellerCountry:req.body.country},(err,data)=>{
