@@ -1,15 +1,19 @@
 var express = require('express');
-var server=express();
+var server = express();
+var http =  require('http');
+var app = http.createServer(server);
 var bodyParser = require("body-parser");
-// var passport = require('passport');
-// var LocalStrategy = require('passport-local').Strategy;
-var session = require('express-session')
+const io = require('socket.io').listen(app);
+
+io.on('connection', socket => { /* ... */ });
 
 // Database Connection and Models
 require('./mongoDB/mongoconnection')
 var User = require("./mongoDB/user-model");
-var Contact = require("./mongoDB/contact-modal")
-var Post = require('./mongoDB/post-ad-model')
+var Contact = require("./mongoDB/contact-modal");
+var Post = require('./mongoDB/post-ad-model');
+var Room = require('./mongoDB/rooms');
+var Chat = require('./mongoDB/chat');
 
 
 server.use(express.static('./build'))
@@ -333,6 +337,17 @@ server.post('/currentad',(req,res)=>{
             console.log(data)
     })
 })
+
+
+// var users = [];
+// var connections = [];
+
+// //Socket.IO code
+// io.sockets.on('connect', (socket)=>{
+//     console.log(socket.id)
+//     connections.push(socket);
+//     console.log('Connected: %s sockets connected', connections.length);
+// })
 
 const PORT = process.env.PORT || 8000
 server.listen(PORT, () => console.log(`server is running at port ${PORT}`))
