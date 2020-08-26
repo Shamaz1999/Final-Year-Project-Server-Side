@@ -1,11 +1,14 @@
 var express = require('express');
 var server = express();
 var http =  require('http');
-var app = http.createServer(server);
-var bodyParser = require("body-parser");
-const io = require('socket.io').listen(app);
+const cors=require('cors');
+server.use(cors());
 
-io.on('connection', socket => { /* ... */ });
+// var app = http.createServer(server);
+var bodyParser = require("body-parser");
+// const io = require('socket.io').listen(app);
+
+// io.on('connection', socket => { /* ... */ });
 
 // Database Connection and Models
 require('./mongoDB/mongoconnection')
@@ -16,11 +19,11 @@ var Room = require('./mongoDB/rooms');
 var Chat = require('./mongoDB/chat');
 
 
+
 server.use(express.static('./build'))
 
 server.use(bodyParser.urlencoded({ extended: true }))
 server.use(bodyParser.json())
-
 server.post('/signup', (req , res)=>{ 
 
     var user = new User(req.body)
@@ -338,7 +341,16 @@ server.post('/currentad',(req,res)=>{
     })
 })
 
+var http= require("http");
 
+var app=http.createServer(server);
+var io=require("socket.io")(app);
+
+
+io.on('connection',function (socket){
+    // console.log(socket.id);
+    console.log("user connected")
+})
 // var users = [];
 // var connections = [];
 
@@ -350,4 +362,4 @@ server.post('/currentad',(req,res)=>{
 // })
 
 const PORT = process.env.PORT || 8000
-server.listen(PORT, () => console.log(`server is running at port ${PORT}`))
+app.listen(PORT, () => console.log(`server is running at port ${PORT}`))

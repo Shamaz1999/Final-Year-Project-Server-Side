@@ -1,8 +1,11 @@
 var mongoose = require("mongoose")
-const roomsSchema = { 
-    name: String, 
-    topic: String, 
-    comments: String, 
-    date: String}
-const rooms = mongoose.model('Rooms',roomsSchema);
+const roomsSchema = {
+    person1: String,
+    person2: String,
+    date: {
+        type: Date,
+        default: Date.now()
+    }
+}
+const rooms = mongoose.model('Rooms', roomsSchema);
 module.exports = rooms
