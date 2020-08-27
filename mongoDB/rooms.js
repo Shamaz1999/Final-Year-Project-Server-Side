@@ -1,7 +1,13 @@
 var mongoose = require("mongoose")
 const roomsSchema = {
-    person1: String,
-    person2: String,
+    person1: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref : "User"
+    },
+    person2: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
     date: {
         type: Date,
         default: Date.now()
