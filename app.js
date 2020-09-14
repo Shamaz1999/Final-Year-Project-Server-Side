@@ -179,21 +179,26 @@ server.post('/updateuser', (req, res) => {
     })
 })
 
-
-
-
+//Seller Info Route
 
 server.post('/sellerprofile', (req, res) => {
-    console.log(req.body)
+    console.log(req.body.sellerId)
     console.log("This is seller profile request")
-
+    var response;
 
     User.findById(req.body.sellerId, (err, data) => {
         if (err)
-            console.log(err)
-        else
-            console.log(data)
-        res.send(data)
+            console.log("this is seller progfile error "+ err)
+        else{
+
+            if(data == null){
+                response = {
+                    data
+                }
+            }
+        }
+
+        res.send(response)
 
     })
 })
@@ -349,6 +354,7 @@ server.post('/currentad', (req, res) => {
 
 var http = require("http");
 const { Socket } = require('dgram');
+const { response } = require('express');
 
 var app = http.createServer(server);
 var io = require("socket.io")(app);
