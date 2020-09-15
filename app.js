@@ -205,22 +205,27 @@ server.post('/sellerprofile', (req, res) => {
 
 
 //  Update User info route
+
 server.post('/updateinfo', (req, res) => {
     var id = req.body.id;
+    console.log("this is update user info req")
+    console.log(req.body)
 
     User.findByIdAndUpdate(id, {
         $set: {
             name: req.body.name,
             password: req.body.password,
             phone: req.body.phone,
-            about: req.body.about
+            about: req.body.about,
+            city: req.body.city,
+            country: req.body.country,
+            address: req.body.address,
         }
     }, { new: true }, (err, data) => {
         if (err)
             console.log(err)
         else
             res.send(data)
-
     })
 })
 

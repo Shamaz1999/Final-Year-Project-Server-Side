@@ -9,6 +9,7 @@ const userSchema = {
     gender: String,
     DOB: String,
     country: String,
+    city: String,
     address: String,
     date: String,
     favorites: [{
