@@ -188,10 +188,10 @@ server.post('/sellerprofile', (req, res) => {
 
     User.findById(req.body.sellerId, (err, data) => {
         if (err)
-            console.log("this is seller progfile error "+ err)
-        else{
+            console.log("this is seller progfile error " + err)
+        else {
 
-            if(data == null){
+            if (data == null) {
                 response = {
                     data
                 }
@@ -356,7 +356,31 @@ server.post('/currentad', (req, res) => {
         // console.log(data)
     })
 })
-
+server.get('/get-room/:person1/:person2', async (req, res) => {
+    try {
+        const { person1, person2 } = req.params;
+        const room = await Room.findOne({ $or: [{ person1, person2 }, { person1: person2, person2: person1 }] });
+        if (room) {
+            res.status(200).json(room);
+        } else {
+            const newRoom = new Room({ person1, person2 });
+            await newRoom.save();
+            res.status(200).json(room);
+        }
+    } catch (error) {
+        console.log(error);
+        res.json(error);
+    }
+})
+server.get('/get-rooms/:userId', async (req, res) => {
+    try {
+        const rooms = await Room.find({ $or: [{ person1: req.params.userId }, { person2: req.params.userId }] }).populate('person1 person2');
+        res.status(200).json(rooms);
+    } catch (error) {
+        console.log(error);
+        res.json(error);
+    }
+})
 var http = require("http");
 const { Socket } = require('dgram');
 const { response } = require('express');
@@ -373,7 +397,7 @@ io.sockets.on('connect', (socket) => {
 
     socket.on('new user', async (userID) => {
         try {
-            await OnlineUsers.update({ user: userID }, { $set: { user: userID, socketId: socket.id }},{upsert:true} );
+            await OnlineUsers.update({ user: userID }, { $set: { user: userID, socketId: socket.id } }, { upsert: true });
         } catch (error) {
             console.log(error);
         }
