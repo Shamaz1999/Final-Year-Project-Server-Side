@@ -182,19 +182,21 @@ server.post('/updateuser', (req, res) => {
 //Seller Info Route
 
 server.post('/sellerprofile', (req, res) => {
-    console.log(req.body.sellerId)
-    console.log("This is seller profile request")
-    var response;
+    // console.log(req.body.sellerId)
+    // console.log("This is seller profile request")
+    var response =null;
 
     User.findById(req.body.sellerId, (err, data) => {
         if (err)
             console.log("this is seller progfile error " + err)
         else {
 
-            if (data == null) {
+            if (data !== null) {
                 response = {
                     data
                 }
+            }else{
+                response = 'user not found'
             }
         }
 
@@ -213,7 +215,8 @@ server.post('/updateinfo', (req, res) => {
 
     User.findByIdAndUpdate(id, {
         $set: {
-            name: req.body.name,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
             password: req.body.password,
             phone: req.body.phone,
             about: req.body.about,
@@ -387,7 +390,6 @@ const { response } = require('express');
 
 var app = http.createServer(server);
 var io = require("socket.io")(app);
-
 
 
 
