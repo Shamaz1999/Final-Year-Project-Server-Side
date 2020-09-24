@@ -32,7 +32,6 @@ server.post('/signup', (req, res) => {
         if (err)
             console.log(err)
         else
-            console.log(data)
         res.send(data)
         console.log("Data inserted : User Added")
     })
@@ -40,7 +39,6 @@ server.post('/signup', (req, res) => {
 
 server.post('/contact', (req, res) => {
     res.send(req.body);
-    console.log(req.body);
 
     var contact = new Contact(req.body)
     contact.save((err, data) => {
@@ -53,7 +51,6 @@ server.post('/contact', (req, res) => {
 
 server.post('/postad', (req, res) => {
     res.send(req.body);
-    console.log(req.body);
 
     var post = new Post(req.body)
     post.save((err, data) => {
@@ -74,7 +71,6 @@ server.post('/login', (req, res) => {
         if (err)
             console.log(err)
         else
-            console.log(data)
         res.send(data)
     })
 
@@ -94,13 +90,11 @@ server.post('/allads', (req, res) => {
 
 
 server.post('/userads', (req, res) => {
-    // console.log(req.body._id)
 
     Post.find({ sellerId: req.body._id }, (err, data) => {
         if (err)
             console.log(err)
         else
-            console.log(data)
         res.send(data)
 
     })
@@ -108,14 +102,11 @@ server.post('/userads', (req, res) => {
 
 // Favorite ads
 server.post('/favoriteads', (req, res) => {
-    console.log("This is favorite ads req")
-    console.log(req.body)
 
     Post.find({ _id: { $in: req.body } }, (err, data) => {
         if (err)
             console.log(err)
         else {
-            console.log(data);
             res.send(data)
         }
     })
@@ -124,27 +115,22 @@ server.post('/favoriteads', (req, res) => {
 
 server.post('/categoryads', (req, res) => {
 
-    console.log(req.body)
-
     Post.find({ category: req.body.category }, (err, data) => {
         if (err)
             console.log(err)
         else
-            console.log(data)
         res.send(data)
 
     })
 })
 
 server.post('/countryads', (req, res) => {
-    console.log('this is country ads request')
-    console.log(req.body)
+    
 
     Post.find({ sellerCountry: req.body.country }, (err, data) => {
         if (err)
             console.log(err)
         else
-            console.log(data)
         res.send(data)
 
     })
@@ -153,13 +139,10 @@ server.post('/countryads', (req, res) => {
 
 server.post('/searchads', (req, res) => {
 
-    console.log(req.body)
-
     Post.find({ adTitle: new RegExp(req.body.search, 'i') }, (err, data) => {
         if (err)
             console.log(err)
         else
-            console.log(data)
         res.send(data)
 
     })
@@ -173,18 +156,15 @@ server.post('/updateuser', (req, res) => {
         if (err)
             console.log(err)
         else
-            console.log(data)
         res.send(data)
 
     })
 })
 
 //Seller Info Route
-
 server.post('/sellerprofile', (req, res) => {
-    // console.log(req.body.sellerId)
-    // console.log("This is seller profile request")
-    var response =null;
+   
+    var response = null;
 
     User.findById(req.body.sellerId, (err, data) => {
         if (err)
@@ -195,7 +175,7 @@ server.post('/sellerprofile', (req, res) => {
                 response = {
                     data
                 }
-            }else{
+            } else {
                 response = 'user not found'
             }
         }
@@ -206,12 +186,23 @@ server.post('/sellerprofile', (req, res) => {
 })
 
 
+//  Seller Ads Route
+
+server.post('/sellerads', (req,res)=>{
+    console.log(req.body)
+    Post.find({sellerId: req.body.sellerId}, (err, data)=>{
+        if (err)
+            console.log(err)
+        else
+        res.send(data)
+    })
+})
+
 //  Update User info route
 
 server.post('/updateinfo', (req, res) => {
     var id = req.body.id;
-    console.log("this is update user info req")
-    console.log(req.body)
+
 
     User.findByIdAndUpdate(id, {
         $set: {
@@ -235,8 +226,6 @@ server.post('/updateinfo', (req, res) => {
 //Update Ad route
 server.post('/editad', (req, res) => {
 
-    console.log("This is update ad request");
-    console.log(req.body);
     Post.findByIdAndUpdate(req.body.id,
         {
             $set: {
@@ -262,7 +251,6 @@ server.post('/editad', (req, res) => {
             if (err)
                 console.log(err)
             else
-                console.log(data)
             res.send(data);
         })
 })
@@ -271,12 +259,10 @@ server.post('/editad', (req, res) => {
 //Add Favorite Ads Route
 server.post('/markfavorite', async (req, res) => {
 
-    console.log("This is favorite req ");
     var id = req.body.user._id
     try {
         const user = await User.findOne({ _id: id });
         if (user) {
-            console.log('user found')
             user.favorites.push(req.body.id);
             user.markModified('favorites');
             await user.save();
@@ -293,7 +279,6 @@ server.post('/markfavorite', async (req, res) => {
 //Remove Favorite Ads Route
 server.post('/removefavorite', async (req, res) => {
 
-    console.log("This is remove favorite req ");
     var id = req.body.user._id
 
     try {
@@ -320,7 +305,6 @@ server.post('/deleteuser', (req, res) => {
         if (err)
             console.log(err)
         else
-            console.log('User Delted')
         res.send(data)
 
     })
@@ -328,8 +312,6 @@ server.post('/deleteuser', (req, res) => {
 
 //Delete Ad Route
 server.post('/deletead', (req, res) => {
-    console.log("this is delete ad request")
-    // console.log(req.body.adToDelete)
     var id = req.body.adToDelete
     console.log(id)
     Post.findByIdAndDelete(id, (err, data) => {
@@ -344,8 +326,6 @@ server.post('/deletead', (req, res) => {
 
 
 server.post('/currentad', (req, res) => {
-    // console.log(req.body)
-    // console.log("This is current add req")
 
     id = req.body.id
 
@@ -360,8 +340,10 @@ server.post('/currentad', (req, res) => {
     })
 })
 server.get('/get-room/:person1/:person2', async (req, res) => {
+    console.log('get room requiest')
     try {
         const { person1, person2 } = req.params;
+        console.log(req.params);
         const room = await Room.findOne({ $or: [{ person1, person2 }, { person1: person2, person2: person1 }] });
         if (room) {
             res.status(200).json(room);
@@ -376,6 +358,8 @@ server.get('/get-room/:person1/:person2', async (req, res) => {
     }
 })
 server.get('/get-rooms/:userId', async (req, res) => {
+    console.log('get rooms route')
+    console.log(req.params)
     try {
         const rooms = await Room.find({ $or: [{ person1: req.params.userId }, { person2: req.params.userId }] }).populate('person1 person2');
         res.status(200).json(rooms);
@@ -384,6 +368,18 @@ server.get('/get-rooms/:userId', async (req, res) => {
         res.json(error);
     }
 })
+
+server.get('/get-chat/:roomId', async (req, res) => {
+    try {
+        const chat = await Chat.find({ room: req.params.roomId })
+        res.status(200).json(chat);
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+
+
 var http = require("http");
 const { Socket } = require('dgram');
 const { response } = require('express');
@@ -419,6 +415,22 @@ io.sockets.on('connect', (socket) => {
 });
 
 
+
+server.post('/message-sent', async (req, res) => {
+    console.log('message sent request')
+    console.log(req.body)
+    try {
+        const message = new Chat(req.body);
+        await message.save();
+        const onlineUser = await OnlineUsers.findOne({ user: req.body.sellerId });
+        if(onlineUser){
+            io.to(onlineUser.socketId).emit("NEW_MESSAGE",message);
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(400).json(error);
+    }
+})
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT, () => console.log(`server is running at port ${PORT}`))
