@@ -344,12 +344,13 @@ server.get('/get-room/:person1/:person2', async (req, res) => {
     try {
         const { person1, person2 } = req.params;
         console.log(req.params);
-        const room = await Room.findOne({ $or: [{ person1, person2 }, { person1: person2, person2: person1 }] });
+        var room = await Room.findOne({ $or: [{ person1, person2 }, { person1: person2, person2: person1 }] }).populate('person1 person2');
         if (room) {
             res.status(200).json(room);
         } else {
             const newRoom = new Room({ person1, person2 });
             await newRoom.save();
+            room = await Room.findOne({ _id:newRoom._id }).populate('person1 person2');
             res.status(200).json(room);
         }
     } catch (error) {
@@ -377,7 +378,6 @@ server.get('/get-chat/:roomId', async (req, res) => {
         console.log(error)
     }
 })
-
 
 
 var http = require("http");
