@@ -4,11 +4,8 @@ var http = require('http');
 const cors = require('cors');
 server.use(cors());
 
-// var app = http.createServer(server);
 var bodyParser = require("body-parser");
-// const io = require('socket.io').listen(app);
 
-// io.on('connection', socket => { /* ... */ });
 
 // Database Connection and Models
 require('./mongoDB/mongoconnection')
@@ -32,7 +29,7 @@ server.post('/signup', (req, res) => {
         if (err)
             console.log(err)
         else
-        res.send(data)
+            res.send(data)
         console.log("Data inserted : User Added")
     })
 })
@@ -71,7 +68,7 @@ server.post('/login', (req, res) => {
         if (err)
             console.log(err)
         else
-        res.send(data)
+            res.send(data)
     })
 
 })
@@ -95,14 +92,15 @@ server.post('/userads', (req, res) => {
         if (err)
             console.log(err)
         else
-        res.send(data)
+            res.send(data)
 
     })
 })
 
 // Favorite ads
 server.post('/favoriteads', (req, res) => {
-
+    console.log('this is fav ad  req')
+    console.log(req.body)
     Post.find({ _id: { $in: req.body } }, (err, data) => {
         if (err)
             console.log(err)
@@ -119,19 +117,19 @@ server.post('/categoryads', (req, res) => {
         if (err)
             console.log(err)
         else
-        res.send(data)
+            res.send(data)
 
     })
 })
 
 server.post('/countryads', (req, res) => {
-    
+
 
     Post.find({ sellerCountry: req.body.country }, (err, data) => {
         if (err)
             console.log(err)
         else
-        res.send(data)
+            res.send(data)
 
     })
 })
@@ -143,7 +141,7 @@ server.post('/searchads', (req, res) => {
         if (err)
             console.log(err)
         else
-        res.send(data)
+            res.send(data)
 
     })
 })
@@ -156,14 +154,14 @@ server.post('/updateuser', (req, res) => {
         if (err)
             console.log(err)
         else
-        res.send(data)
+            res.send(data)
 
     })
 })
 
 //Seller Info Route
 server.post('/sellerprofile', (req, res) => {
-   
+
     var response = null;
 
     User.findById(req.body.sellerId, (err, data) => {
@@ -188,13 +186,13 @@ server.post('/sellerprofile', (req, res) => {
 
 //  Seller Ads Route
 
-server.post('/sellerads', (req,res)=>{
+server.post('/sellerads', (req, res) => {
     console.log(req.body)
-    Post.find({sellerId: req.body.sellerId}, (err, data)=>{
+    Post.find({ sellerId: req.body.sellerId }, (err, data) => {
         if (err)
             console.log(err)
         else
-        res.send(data)
+            res.send(data)
     })
 })
 
@@ -251,7 +249,7 @@ server.post('/editad', (req, res) => {
             if (err)
                 console.log(err)
             else
-            res.send(data);
+                res.send(data);
         })
 })
 
@@ -305,7 +303,7 @@ server.post('/deleteuser', (req, res) => {
         if (err)
             console.log(err)
         else
-        res.send(data)
+            res.send(data)
 
     })
 })
@@ -315,10 +313,8 @@ server.post('/deletead', (req, res) => {
     var id = req.body.adToDelete
     console.log(id)
     Post.findByIdAndDelete(id, (err, data) => {
-        if (err)
-            console.log(err)
-        else
-            console.log('Add deleted')
+        if (err) { console.log(err) }
+        else { console.log('Add deleted') }
         res.send(data)
     })
 })
@@ -350,7 +346,7 @@ server.get('/get-room/:person1/:person2', async (req, res) => {
         } else {
             const newRoom = new Room({ person1, person2 });
             await newRoom.save();
-            room = await Room.findOne({ _id:newRoom._id }).populate('person1 person2');
+            room = await Room.findOne({ _id: newRoom._id }).populate('person1 person2');
             res.status(200).json(room);
         }
     } catch (error) {
@@ -423,14 +419,18 @@ server.post('/message-sent', async (req, res) => {
         const message = new Chat(req.body);
         await message.save();
         const onlineUser = await OnlineUsers.findOne({ user: req.body.sellerId });
-        if(onlineUser){
-            io.to(onlineUser.socketId).emit("NEW_MESSAGE",message);
+        if (onlineUser) {
+            io.to(onlineUser.socketId).emit("NEW_MESSAGE", message);
         }
     } catch (error) {
         console.log(error);
         res.status(400).json(error);
     }
 })
+
+server.use("/", (req, res, next) => {
+    res.sendFile("build/index.html", { root: __dirname });
+});
 
 const PORT = process.env.PORT || 8000
 app.listen(PORT, () => console.log(`server is running at port ${PORT}`))
