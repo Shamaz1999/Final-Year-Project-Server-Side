@@ -22,7 +22,9 @@ server.use(express.static('./build'))
 
 server.use(bodyParser.urlencoded({ extended: true }))
 server.use(bodyParser.json())
+
 server.post('/signup', (req, res) => {
+    console.log("Signup route req")
 
     var user = new User(req.body)
     user.save((err, data) => {
@@ -30,7 +32,7 @@ server.post('/signup', (req, res) => {
             console.log(err)
         else
             res.send(data)
-        console.log("Data inserted : User Added")
+        console.log(data)
     })
 })
 
