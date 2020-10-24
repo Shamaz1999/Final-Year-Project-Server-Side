@@ -24,15 +24,12 @@ server.use(bodyParser.urlencoded({ extended: true }))
 server.use(bodyParser.json())
 
 server.post('/signup', (req, res) => {
-    console.log("Signup route req")
-
     var user = new User(req.body)
     user.save((err, data) => {
         if (err)
             console.log(err)
         else
             res.send(data)
-        console.log(data)
     })
 })
 
@@ -101,8 +98,6 @@ server.post('/userads', (req, res) => {
 
 // Favorite ads
 server.post('/favoriteads', (req, res) => {
-    console.log('this is fav ad  req')
-    console.log(req.body)
     Post.find({ _id: { $in: req.body } }, (err, data) => {
         if (err)
             console.log(err)
@@ -114,7 +109,6 @@ server.post('/favoriteads', (req, res) => {
 })
 
 server.post('/categoryads', (req, res) => {
-
     Post.find({ category: req.body.category }, (err, data) => {
         if (err)
             console.log(err)
@@ -168,7 +162,7 @@ server.post('/sellerprofile', (req, res) => {
 
     User.findById(req.body.sellerId, (err, data) => {
         if (err)
-            console.log("this is seller progfile error " + err)
+            console.log(err)
         else {
 
             if (data !== null) {
@@ -189,7 +183,6 @@ server.post('/sellerprofile', (req, res) => {
 //  Seller Ads Route
 
 server.post('/sellerads', (req, res) => {
-    console.log(req.body)
     Post.find({ sellerId: req.body.sellerId }, (err, data) => {
         if (err)
             console.log(err)
@@ -202,8 +195,6 @@ server.post('/sellerads', (req, res) => {
 
 server.post('/updateinfo', (req, res) => {
     var id = req.body.id;
-
-
     User.findByIdAndUpdate(id, {
         $set: {
             firstName: req.body.firstName,
@@ -278,9 +269,7 @@ server.post('/markfavorite', async (req, res) => {
 
 //Remove Favorite Ads Route
 server.post('/removefavorite', async (req, res) => {
-
     var id = req.body.user._id
-
     try {
         const user = await User.findOne({ _id: id });
         if (user) {
@@ -313,20 +302,18 @@ server.post('/deleteuser', (req, res) => {
 //Delete Ad Route
 server.post('/deletead', (req, res) => {
     var id = req.body.adToDelete
-    console.log(id)
     Post.findByIdAndDelete(id, (err, data) => {
         if (err) { console.log(err) }
-        else { console.log('Add deleted') }
-        res.send(data)
+        else {
+             res.send(data)
+            }
     })
 })
 
 
 
 server.post('/currentad', (req, res) => {
-
     id = req.body.id
-
     Post.findById(id, (err, data) => {
         if (err) {
             console.log(err)
@@ -334,14 +321,11 @@ server.post('/currentad', (req, res) => {
         }
         else
             res.send(data)
-        // console.log(data)
     })
 })
 server.get('/get-room/:person1/:person2', async (req, res) => {
-    console.log('get room requiest')
     try {
         const { person1, person2 } = req.params;
-        console.log(req.params);
         var room = await Room.findOne({ $or: [{ person1, person2 }, { person1: person2, person2: person1 }] }).populate('person1 person2');
         if (room) {
             res.status(200).json(room);
@@ -357,8 +341,6 @@ server.get('/get-room/:person1/:person2', async (req, res) => {
     }
 })
 server.get('/get-rooms/:userId', async (req, res) => {
-    console.log('get rooms route')
-    console.log(req.params)
     try {
         const rooms = await Room.find({ $or: [{ person1: req.params.userId }, { person2: req.params.userId }] }).populate('person1 person2');
         res.status(200).json(rooms);
@@ -389,8 +371,6 @@ var io = require("socket.io")(app);
 
 //Socket.IO code
 io.sockets.on('connect', (socket) => {
-    console.log(socket.id)
-
     socket.on('new user', async (userID) => {
         try {
             await OnlineUsers.update({ user: userID }, { $set: { user: userID, socketId: socket.id } }, { upsert: true });
@@ -415,8 +395,6 @@ io.sockets.on('connect', (socket) => {
 
 
 server.post('/message-sent', async (req, res) => {
-    console.log('message sent request')
-    console.log(req.body)
     try {
         const message = new Chat(req.body);
         await message.save();
